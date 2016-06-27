@@ -1,0 +1,5 @@
+default :
+	g++ -o WifiDeauth main.cpp wifi_deauth.cpp -O3 -std=c++11 -lpcap -lpthread -ltins
+
+clean :
+	rm *.o WifiDeauth
