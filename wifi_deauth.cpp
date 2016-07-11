@@ -22,7 +22,6 @@
 */
 
 #include "wifi_deauth.h"
-#include <algorithm>
 
 WifiDeauth::WifiDeauth(std::string _ifaceTrigger, std::string _ifaceScanner, uint16_t _channel)
     : ifaceTrigger(_ifaceTrigger), ifaceScanner(_ifaceScanner), rangeNet(Tins::IPv4Range::from_mask(ipNet, infoScanner.netmask)),

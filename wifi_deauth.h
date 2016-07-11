@@ -24,6 +24,9 @@
 #ifndef WIFI_DEAUTH_H
 #define WIFI_DEAUTH_H
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include <iostream>
 #include <algorithm>
 #include <map>
