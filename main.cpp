@@ -24,9 +24,12 @@
 #include <stdlib.h>
 #include "wifi_deauth.h"
 
+#ifdef __linux__
 #define NIC_LOCATION "/sys/class/net/"
+#endif
 
 bool isExistDirectory(const char* nic_name) {
+#ifdef __linux__
   struct stat sb;
   char path_name[100];
 
@@ -36,6 +39,10 @@ bool isExistDirectory(const char* nic_name) {
   }
 
   return false;
+#else
+  // If unsupported environment, Not the network interface exist check.
+  return true;
+#endif
 }
 
 int main(int argc, char** argv) {
