@@ -21,15 +21,28 @@
  * SOFTWARE.
 */
 
-#include <stdlib.h>
-#include "wifi_deauth.h"
-
-#ifdef __linux__
+//I defined system headers and macros here.
+//Because, 'wifi_deauth.h' and 'wifi_deauth.cpp' must be system independent module.
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+#include <sys/stat.h>
+#include <sys/types.h>
 #define NIC_LOCATION "/sys/class/net/"
+
+#elif defined(__WIN32)
 #endif
 
+#include <cstdlib>
+#include "wifi_deauth.h"
+
+inline int chkWiFiChannel(int _channel){
+    //Not compatible to 5Ghz 802.11 Yet
+    if(_channel < 1 || _channel > 14)
+        return 1;
+    return _channel;
+}
+
 bool isExistDirectory(const char* nic_name) {
-#ifdef __linux__
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
   struct stat sb;
   char path_name[100];
 
@@ -39,6 +52,10 @@ bool isExistDirectory(const char* nic_name) {
   }
 
   return false;
+
+#elif defined(__WIN32)
+
+  return true;
 #else
   // If unsupported environment, Not the network interface exist check.
   return true;
@@ -48,17 +65,17 @@ bool isExistDirectory(const char* nic_name) {
 int main(int argc, char** argv) {
   if (argc < 4) {
     std::cout << "[*] Usage : " << argv[0] << " [Monitor Interface] [Managed Interface] [WiFi Channel]" << std::endl;
-    std::cout << "If you make a wrong input to 'WiFi Channel', channel is setted by 0." << std::endl;
+    std::cout << "    If you make a wrong input to 'WiFi Channel', channel is setted by 1." << std::endl;
     return -1;
   }
 
   if (isExistDirectory(argv[1]) == false || isExistDirectory(argv[2]) == false) {
-    std::cout << "Input interface is not exist." << std::endl;
-    std::cout << "Please check your interface." << std::endl;
+    std::cout << "[*] Input interface is not exist." << std::endl;
+    std::cout << "    Please check your interface." << std::endl;
     return -1;
   }
 
-  WifiDeauth deauth(argv[1], argv[2], atoi(argv[3]));
+  WifiDeauth deauth(argv[1], argv[2], chkWiFiChannel(atoi(argv[3])));
   deauth.runDeauth();
 
   return 0;

@@ -24,17 +24,12 @@
 #ifndef WIFI_DEAUTH_H
 #define WIFI_DEAUTH_H
 
-#ifdef __linux__
-#include <sys/stat.h>
-#include <sys/types.h>
-#endif
-
 #include <iostream>
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <cstdint>
 #include <tins/tins.h>
-#include <unistd.h>
 
 class WifiDeauth
 {

