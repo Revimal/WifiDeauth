@@ -9,8 +9,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,44 +24,45 @@
 #ifndef WIFI_DEAUTH_H
 #define WIFI_DEAUTH_H
 
-#include <iostream>
 #include <algorithm>
-#include <map>
-#include <vector>
 #include <cstdint>
+#include <iostream>
+#include <map>
 #include <tins/tins.h>
+#include <vector>
 
-class WifiDeauth
-{
+class WifiDeauth {
 private:
-    const Tins::NetworkInterface ifaceTrigger;
-    const Tins::NetworkInterface ifaceScanner;
-    const std::string strSniffer;
-    const Tins::NetworkInterface::Info infoTrigger = ifaceTrigger.info();
-    const Tins::NetworkInterface::Info infoScanner = ifaceScanner.info();
-    const Tins::IPv4Address ipNet = Tins::IPv4Address(infoScanner.ip_addr & infoScanner.netmask);
-    const Tins::IPv4Range rangeNet;
-    const uint32_t channel;
+  const Tins::NetworkInterface ifaceTrigger;
+  const Tins::NetworkInterface ifaceScanner;
+  const std::string strSniffer;
+  const Tins::NetworkInterface::Info infoTrigger = ifaceTrigger.info();
+  const Tins::NetworkInterface::Info infoScanner = ifaceScanner.info();
+  const Tins::IPv4Address ipNet =
+      Tins::IPv4Address(infoScanner.ip_addr & infoScanner.netmask);
+  const Tins::IPv4Range rangeNet;
+  const uint32_t channel;
 
-    Tins::RadioTap radio = Tins::RadioTap();
-    Tins::PacketSender sender;
-    Tins::Dot11Deauthentication deauth = Tins::Dot11Deauthentication();
+  Tins::RadioTap radio = Tins::RadioTap();
+  Tins::PacketSender sender;
+  Tins::Dot11Deauthentication deauth = Tins::Dot11Deauthentication();
 
-    std::map<std::string, Tins::HWAddress<6> > mapAP;
-    std::vector<Tins::HWAddress<6> > vecVictims;
-    std::vector<Tins::HWAddress<6> > vecFinalAP;
+  std::map<std::string, Tins::HWAddress<6>> mapAP;
+  std::vector<Tins::HWAddress<6>> vecVictims;
+  std::vector<Tins::HWAddress<6>> vecFinalAP;
 
-    bool flgPrint = true;
-    uint32_t iterSniff = 500;
+  bool flgPrint = true;
+  uint32_t iterSniff = 500;
 
-    bool callbackSniff(Tins::PDU &pdu);
-    inline void listingAP();
-    void scanVictims();
-    void deauthVictims();
+  bool callbackSniff(Tins::PDU &pdu);
+  inline void listingAP();
+  void scanVictims();
+  void deauthVictims();
 
 public:
-    WifiDeauth(std::string _ifaceTrigger, std::string _ifaceScanner, uint16_t _channel);
-    void runDeauth();
+  WifiDeauth(std::string _ifaceTrigger, std::string _ifaceScanner,
+             uint16_t _channel);
+  void runDeauth();
 };
 
 #endif // WIFI_DEAUTH_H
